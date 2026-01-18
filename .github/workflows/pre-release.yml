@@ -49,24 +49,12 @@ jobs:
           Write-Host "Created package: $zipPath"
         }
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Release Assets
+      uses: softprops/action-gh-release@v2
       with:
+        files: ./artifacts/*.zip
         tag_name: pre-release-$(Get-Date -Format 'yyyyMMdd-HHmmss')
         release_name: "[Experimental] $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
         draft: false
         prerelease: true
         body: "Pre-release build from main branch. Built on $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-
-    - name: Upload Release Assets
-      uses: actions/upload-release-asset@v3
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/*.zip
-        asset_name: ${{ github.event.repository.name }}-${{ github.sha }}.zip
-        asset_content_type: application/zip
