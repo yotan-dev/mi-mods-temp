@@ -33,14 +33,17 @@ jobs:
         cd scripts
         npm install
         npm run build-release
-        echo "TAG_NAME=pre-release-$(Get-Date -Format 'yyyyMMdd-HHmmss')" >> "$GITHUB_ENV"
+
+    - name: Prepare release info
+      id: prepare-release
+      run: echo "TAG_NAME=pre-release-$(Get-Date -Format 'yyyyMMdd-HHmmss')" >> "$GITHUB_OUTPUT"
 
     - name: Upload Release Assets
       uses: softprops/action-gh-release@v2
       with:
         files: ./Release/*.zip
-        tag_name: "$TAG_NAME"
-        release_name: "[Experimental] $TAG_NAME"
+        tag_name: ${{ steps.prepare-release.outputs.TAG_NAME }}
+        release_name: "[Experimental] ${{ steps.prepare-release.outputs.TAG_NAME }}"
         draft: false
         prerelease: true
         body: "Pre-release build from main branch. Built on $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
