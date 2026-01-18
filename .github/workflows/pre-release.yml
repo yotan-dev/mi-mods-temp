@@ -44,8 +44,8 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: ./Release/*.zip
-        name: "[Experimental] $env:TAG_NAME"
-        tag_name: $env:TAG_NAME
+        name: "[Experimental] ${{ env.TAG_NAME }}"
+        tag_name: ${{ env.TAG_NAME }}
         draft: false
         prerelease: true
-        body: "Pre-release build from main branch. Built on $env:BUILD_DATE from commit $env:GITHUB_SHA"
+        body: "Pre-release build from main branch. Built on ${{ env.BUILD_DATE }} from commit ${{ env.GITHUB_SHA }}"

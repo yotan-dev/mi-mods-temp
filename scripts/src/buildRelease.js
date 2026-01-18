@@ -251,28 +251,28 @@ async function main() {
 	const ymcVersion = await buildYotanModCore();
 	await pack('YotanModCore', ymcVersion, resolve(artifactsDir, 'YotanModCore'));
 
-	const hfVersion = await buildHFramework();
-	await pack('HFramework', hfVersion, resolve(artifactsDir, 'HFramework'));
+	// const hfVersion = await buildHFramework();
+	// await pack('HFramework', hfVersion, resolve(artifactsDir, 'HFramework'));
 
-	// Now build leaf mods
-	await Promise.all([
-		(async () => {
-			const version = await buildEnhancedIsland();
-			await pack('EnhancedIsland', version, resolve(artifactsDir, 'EnhancedIsland'));
-		})(),
-		(async () => {
-			const version = await buildGallery();
-			await pack('Gallery', version, resolve(artifactsDir, 'Gallery'));
-		})(),
-		(async () => {
-			const version = await buildHExtensions();
-			await pack('HExtensions', version, resolve(artifactsDir, 'HExtensions'));
-		})(),
-		(async () => {
-			const version = await buildYoUnnoficialPathces();
-			await pack('YoUnnoficialPatches', version, resolve(artifactsDir, 'YoUnnoficialPatches'));
-		})(),
-	]);
+	// // Now build leaf mods
+	// await Promise.all([
+	// 	(async () => {
+	// 		const version = await buildEnhancedIsland();
+	// 		await pack('EnhancedIsland', version, resolve(artifactsDir, 'EnhancedIsland'));
+	// 	})(),
+	// 	(async () => {
+	// 		const version = await buildGallery();
+	// 		await pack('Gallery', version, resolve(artifactsDir, 'Gallery'));
+	// 	})(),
+	// 	(async () => {
+	// 		const version = await buildHExtensions();
+	// 		await pack('HExtensions', version, resolve(artifactsDir, 'HExtensions'));
+	// 	})(),
+	// 	(async () => {
+	// 		const version = await buildYoUnnoficialPathces();
+	// 		await pack('YoUnnoficialPatches', version, resolve(artifactsDir, 'YoUnnoficialPatches'));
+	// 	})(),
+	// ]);
 
 	console.log('\nBuild completed successfully!');
 	console.log(`Artifacts available in: ${artifactsDir}`);
