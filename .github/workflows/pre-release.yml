@@ -24,8 +24,24 @@ jobs:
         dotnet-version: '7.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore
-      working-directory: ${{ github.workspace }}
+      run: |
+        $directories = @(
+          "YotanModCore",
+          "YotanModCoreLoader",
+          "YotanModCorePatcher",
+          "EnhancedIsland",
+          "Gallery",
+          "HExtensions",
+          "HFramework",
+          "YoCustomItems",
+          "YoUnnoficialPatches",
+        )
+        foreach ($dir in $directories) {
+          if (Test-Path $dir) {
+            Write-Host "Restoring $dir..."
+            dotnet restore $dir
+          }
+        }
 
     - name: Create output directory
       run: mkdir -p "${{ github.workspace }}/artifacts"
