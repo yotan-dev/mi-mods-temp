@@ -1,0 +1,72 @@
+name: Create Pre-Release
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'LICENSE'
+      - '**/*.md'
+
+jobs:
+  build-and-package:
+    name: Build and Package
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ${{ github.workspace }}
+
+    - name: Create output directory
+      run: mkdir -p "${{ github.workspace }}/artifacts"
+
+    - name: Build and package projects
+      run: |
+        $projects = Get-ChildItem -Path . -Recurse -Filter "*.csproj" -File |
+                    Where-Object { $_.Name -notlike "*Test*" -and $_.Name -notlike "*Sample*" }
+
+        foreach ($project in $projects) {
+          $projectName = $project.BaseName
+          $outputDir = "${{ github.workspace }}/$projectName/bin/Release/net7.0/win-x64/publish"
+
+          # Publish the project
+          dotnet publish "$($project.FullName)" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+
+          # Create zip file
+          $zipPath = "${{ github.workspace }}/artifacts/$projectName.zip"
+          Compress-Archive -Path "$outputDir/*" -DestinationPath $zipPath -Force
+
+          Write-Host "Created package: $zipPath"
+        }
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: pre-release-$(Get-Date -Format 'yyyyMMdd-HHmmss')
+        release_name: "[Experimental] $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+        draft: false
+        prerelease: true
+        body: "Pre-release build from main branch. Built on $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/*.zip
+        asset_name: ${{ github.event.repository.name }}-${{ github.sha }}.zip
+        asset_content_type: application/zip
