@@ -25,23 +25,15 @@ jobs:
 
     - name: Restore dependencies
       run: |
-        $directories = @(
-          "YotanModCore",
-          "YotanModCoreLoader",
-          "YotanModCorePatcher",
-          "EnhancedIsland",
-          "Gallery",
-          "HExtensions",
-          "HFramework",
-          "YoCustomItems",
-          "YoUnnoficialPatches",
-        )
-        foreach ($dir in $directories) {
-          if (Test-Path $dir) {
-            Write-Host "Restoring $dir..."
-            dotnet restore $dir
-          }
-        }
+        dotnet restore YotanModCore
+        dotnet restore YotanModCoreLoader
+        dotnet restore YotanModCorePatcher
+        dotnet restore EnhancedIsland
+        dotnet restore Gallery
+        dotnet restore HExtensions
+        dotnet restore HFramework
+        dotnet restore YoCustomItems
+        dotnet restore YoUnnoficialPatches
 
     - name: Create output directory
       run: mkdir -p "${{ github.workspace }}/artifacts"
